@@ -1,50 +1,25 @@
-/*
- * 
- 
- */
-package productorconsumidor;
+package Pro_Con;
+import java.util.Random;
+public class Productor extends Thread {
+	private Random r =new Random();
+	private Buffer b;
+	private int iter;
+	public Productor(Buffer b,int iter) {
+		this.b=b;
+		this.iter=iter;
+	}
+	@Override
+	public void run() {
+		for(int i=0;i<iter;i++) {
+			try {
+				int aux=r.nextInt(100);
+				System.out.println(i+" :Productor produce "+aux);
+				b.poner(aux);
+			}catch (InterruptedException ex) {
+				ex.printStackTrace();
+			}
+			
+		}
+	}
 
-import java.util.concurrent.Semaphore;
-
-/**
- *
- * 
- */
-public class Productor extends Thread{
-    //private ProductorConsumidorGUI miPantalla;
-    private Buffer miBuffer;
-    private Semaphore s;
-    String nombre;
-    
-    public Productor(String nombre, Buffer miBuffer, Semaphore s)
-    {
-    	this.nombre = nombre;
-        this.miBuffer = miBuffer;
-        //this.miPantalla = miPantalla;
-        this.s = s;
-    }
-    public void run()
-    {
-       while(true)
-       {
-   		try {
-				s.acquire();
-				char caracter = (char)((Math.random() * ('z'-'a')) + 'a');
-				System.out.print(nombre + "-> ");
-				if((miBuffer.agregar(caracter) == true))
-				{
-					System.out.println(caracter);
-				}
-				s.release();
-				
-				Thread.sleep((int)(Math.random() * 500) + 500);				
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}   	   
-       }
-       
-    }
-    
 }
-

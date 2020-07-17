@@ -1,49 +1,32 @@
-/*
- * 
- *
- */
-package productorconsumidor;
+package Pro_Con;
 
-import java.util.concurrent.Semaphore;
 
-/**
- *
- * 
- */
 public class Consumidor extends Thread{
-    
-
-    private Buffer miBuffer;
-    private Semaphore s;
-    private String nombre;
-    
-    public Consumidor( String nombre, Buffer miBuffer, Semaphore s)
-        {
-    		this.nombre = nombre;
-            this.miBuffer = miBuffer;
-            this.s = s;
-        }  
-    
-    public void run()
-    {
-    	while(true)
-    	{
-    		try {
-				s.acquire();
-				System.out.print(nombre + "<- ");
-				char dev = miBuffer.quitar();
-				if(dev != 0)
-				{
-					System.out.println(dev);
-					
-				}
-				s.release();
-				
-				Thread.sleep((int)(Math.random() * 500) + 500);				
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	private Buffer b;
+	private int iter;
+	public Consumidor(Buffer b,int iter) {
+		this.b=b;
+		this.iter=iter;
+	}
+	@Override
+	public void run() {
+		for(int i=0;i<iter;i++) {
+			int aux;
+			try{
+				aux=b.extraer();
+				System.out.println(i+" :Consumidor consume "+aux);
+			}catch (InterruptedException ex) {
+				ex.printStackTrace();
 			}
-    	}
-    }
+			
+		}
+	}
+	public static void main(String[] args) {
+		Buffer b=new Buffer(5);
+		Productor p=new Productor(b,100);
+		Consumidor c=new Consumidor(b,100);
+		p.start();
+		c.start();
+	}
+
 }
